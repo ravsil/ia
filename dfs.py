@@ -30,6 +30,14 @@ def rebuild_path(start, finish):
         if "".join(cpy) == finish:
             return "Right"
 
+def get_next(a, b, current, tree, stack, depth):
+    l = list(current)
+    l[a], l[b] = l[b], l[a]
+    target = int(''.join(l))
+    if target not in tree:
+        stack.append((depth + 1, target))
+        tree[target] = current
+
 def dfs(puzzle):
     puzzle = int("".join([str(x) for x in puzzle]).replace("0", "9"))
     GOAL = "123456789"
@@ -73,33 +81,13 @@ def dfs(puzzle):
         
         i = current.index('9')
         if i % 3 != 2: # right
-            l = list(current)
-            l[i], l[i + 1] = l[i + 1], l[i]
-            target = int(''.join(l))
-            if target not in tree:
-                stack.append((depth + 1, target))
-                tree[target] = current
+            get_next(i, i + 1, current, tree, stack, depth)
         if i % 3 != 0: # left
-            l = list(current)
-            l[i], l[i - 1] = l[i - 1], l[i]
-            target = int(''.join(l))
-            if target not in tree:
-                stack.append((depth + 1, target))
-                tree[target] = current
-        if i < 6: # down
-            l = list(current)
-            l[i], l[i + 3] = l[i + 3], l[i]
-            target = int(''.join(l))
-            if target not in tree:
-                stack.append((depth + 1, target))
-                tree[target] = current
+            get_next(i, i - 1, current, tree, stack, depth)
         if i > 2: # up
-            l = list(current)
-            l[i], l[i - 3] = l[i - 3], l[i]
-            target = int(''.join(l))
-            if target not in tree:
-                stack.append((depth + 1, target))
-                tree[target] = current
+            get_next(i, i - 3, current, tree, stack, depth)
+        if i < 6: # down
+            get_next(i, i + 3, current, tree, stack, depth)
     return "Sem solução"
     
 puzzle = (0, 8, 7, 6, 5, 4, 3, 2, 1)
